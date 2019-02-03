@@ -30,7 +30,7 @@ class Chat implements MessageComponentInterface {
         // Do we have a username for this user yet?
         if (isset($this->connectedUsersNames[$from->resourceId])) {
             // If we do, append to the chat logs their message
-            $this->logs = '';
+            $this->logs = [];
             $this->logs[] = array(
                 "user" => $this->connectedUsersNames[$from->resourceId],
                 "msg" => $msg,

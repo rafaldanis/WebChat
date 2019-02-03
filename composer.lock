@@ -1,23 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a58b4d5283a04fde31d888915a533997",
+    "content-hash": "bba94379c463d945a27bf4a59387603f",
     "packages": [
         {
             "name": "cboden/ratchet",
-            "version": "dev-master",
+            "version": "v0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ratchetphp/Ratchet.git",
-                "reference": "bca7183c5a4bd895f8a59f09ade17069e58c5ec2"
+                "reference": "0d31f3a8ad4795fd48397712709e55cd07f51360"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ratchetphp/Ratchet/zipball/bca7183c5a4bd895f8a59f09ade17069e58c5ec2",
-                "reference": "bca7183c5a4bd895f8a59f09ade17069e58c5ec2",
+                "url": "https://api.github.com/repos/ratchetphp/Ratchet/zipball/0d31f3a8ad4795fd48397712709e55cd07f51360",
+                "reference": "0d31f3a8ad4795fd48397712709e55cd07f51360",
                 "shasum": ""
             },
             "require": {
@@ -57,7 +57,7 @@
                 "sockets",
                 "websocket"
             ],
-            "time": "2018-03-06T14:44:14+00:00"
+            "time": "2017-12-12T00:49:31+00:00"
         },
         {
             "name": "evenement/evenement",
@@ -891,9 +891,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "cboden/ratchet": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],

@@ -1,6 +1,6 @@
 {
     "require": {
-        "cboden/ratchet": "dev-master"
+        "cboden/ratchet": "^0.4.1"
     },
     "autoload": {
         "psr-0": {
