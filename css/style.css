@@ -19,29 +19,26 @@ html, body{
 .parent_message{
     margin-bottom: 20px;
 }
-div#content, div#page-content-wrapper, div#page-content-wrapper > div{
+div#page-content-wrapper, div#page-content-wrapper > div{
     height: 100%;
 }
 div#wrapper{
-    height: 90%;
-}
-div#form{
-    height: 50%;
-    bottom: 0;
-    margin-bottom: 0;
+    height: 100%;
+    background: #cbcbcb;
 }
 div.login{
     max-height: 290px !important;
 }
 div#chat{
-    height: 50%;
-    overflow-y: auto;
 }
 .message{
-    background-color: #fff;
-    display: inline-block;
-    padding: .375rem .75rem;
-    border-radius: .25rem;
+  display: inline-block;
+  padding: .375rem .75rem;
+  border-bottom: solid 2px #fff3;
+  width: 100%;
+}
+.message span.text-grey{
+  color: #5a5a5a;
 }
 .message span{
 
