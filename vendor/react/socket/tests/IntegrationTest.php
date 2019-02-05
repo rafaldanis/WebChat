@@ -114,12 +114,235 @@ class IntegrationTest extends TestCase
         Block\await($connector->connect('google.com:80'), $loop, self::TIMEOUT);
     }
 
-    public function testConnectingFailsIfTimeoutIsTooSmall()
+    public function testCancellingPendingConnectionWithoutTimeoutShouldNotCreateAnyGarbageReferences()
     {
-        if (!function_exists('stream_socket_enable_crypto')) {
-            $this->markTestSkipped('Not supported on your platform (outdated HHVM?)');
+        if (class_exists('React\Promise\When')) {
+            $this->markTestSkipped('Not supported on legacy Promise v1 API');
         }
 
+        $loop = Factory::create();
+        $connector = new Connector($loop, array('timeout' => false));
+
+        gc_collect_cycles();
+        $promise = $connector->connect('8.8.8.8:80');
+        $promise->cancel();
+        unset($promise);
+
+        $this->assertEquals(0, gc_collect_cycles());
+    }
+
+    public function testCancellingPendingConnectionShouldNotCreateAnyGarbageReferences()
+    {
+        if (class_exists('React\Promise\When')) {
+            $this->markTestSkipped('Not supported on legacy Promise v1 API');
+        }
+
+        $loop = Factory::create();
+        $connector = new Connector($loop);
+
+        gc_collect_cycles();
+        $promise = $connector->connect('8.8.8.8:80');
+        $promise->cancel();
+        unset($promise);
+
+        $this->assertEquals(0, gc_collect_cycles());
+    }
+
+    public function testWaitingForRejectedConnectionShouldNotCreateAnyGarbageReferences()
+    {
+        if (class_exists('React\Promise\When')) {
+            $this->markTestSkipped('Not supported on legacy Promise v1 API');
+        }
+
+        $loop = Factory::create();
+        $connector = new Connector($loop, array('timeout' => false));
+
+        gc_collect_cycles();
+
+        $wait = true;
+        $promise = $connector->connect('127.0.0.1:1')->then(
+            null,
+            function ($e) use (&$wait) {
+                $wait = false;
+                throw $e;
+            }
+        );
+
+        // run loop for short period to ensure we detect connection refused error
+        Block\sleep(0.01, $loop);
+        if ($wait) {
+            Block\sleep(0.2, $loop);
+            if ($wait) {
+                $this->fail('Connection attempt did not fail');
+            }
+        }
+        unset($promise);
+
+        $this->assertEquals(0, gc_collect_cycles());
+    }
+
+    public function testWaitingForConnectionTimeoutDuringDnsLookupShouldNotCreateAnyGarbageReferences()
+    {
+        if (class_exists('React\Promise\When')) {
+            $this->markTestSkipped('Not supported on legacy Promise v1 API');
+        }
+
+        $loop = Factory::create();
+        $connector = new Connector($loop, array('timeout' => 0.001));
+
+        gc_collect_cycles();
+
+        $wait = true;
+        $promise = $connector->connect('google.com:80')->then(
+            null,
+            function ($e) use (&$wait) {
+                $wait = false;
+                throw $e;
+            }
+        );
+
+        // run loop for short period to ensure we detect connection timeout error
+        Block\sleep(0.01, $loop);
+        if ($wait) {
+            Block\sleep(0.2, $loop);
+            if ($wait) {
+                $this->fail('Connection attempt did not fail');
+            }
+        }
+        unset($promise);
+
+        $this->assertEquals(0, gc_collect_cycles());
+    }
+
+    public function testWaitingForConnectionTimeoutDuringTcpConnectionShouldNotCreateAnyGarbageReferences()
+    {
+        if (class_exists('React\Promise\When')) {
+            $this->markTestSkipped('Not supported on legacy Promise v1 API');
+        }
+
+        $loop = Factory::create();
+        $connector = new Connector($loop, array('timeout' => 0.000001));
+
+        gc_collect_cycles();
+
+        $wait = true;
+        $promise = $connector->connect('8.8.8.8:53')->then(
+            null,
+            function ($e) use (&$wait) {
+                $wait = false;
+                throw $e;
+            }
+        );
+
+        // run loop for short period to ensure we detect connection timeout error
+        Block\sleep(0.01, $loop);
+        if ($wait) {
+            Block\sleep(0.2, $loop);
+            if ($wait) {
+                $this->fail('Connection attempt did not fail');
+            }
+        }
+        unset($promise);
+
+        $this->assertEquals(0, gc_collect_cycles());
+    }
+
+    public function testWaitingForInvalidDnsConnectionShouldNotCreateAnyGarbageReferences()
+    {
+        if (class_exists('React\Promise\When')) {
+            $this->markTestSkipped('Not supported on legacy Promise v1 API');
+        }
+
+        $loop = Factory::create();
+        $connector = new Connector($loop, array('timeout' => false));
+
+        gc_collect_cycles();
+
+        $wait = true;
+        $promise = $connector->connect('example.invalid:80')->then(
+            null,
+            function ($e) use (&$wait) {
+                $wait = false;
+                throw $e;
+            }
+        );
+
+        // run loop for short period to ensure we detect DNS error
+        Block\sleep(0.01, $loop);
+        if ($wait) {
+            Block\sleep(0.2, $loop);
+            if ($wait) {
+                $this->fail('Connection attempt did not fail');
+            }
+        }
+        unset($promise);
+
+        $this->assertEquals(0, gc_collect_cycles());
+    }
+
+    /**
+     * @requires PHP 7
+     */
+    public function testWaitingForInvalidTlsConnectionShouldNotCreateAnyGarbageReferences()
+    {
+        if (class_exists('React\Promise\When')) {
+            $this->markTestSkipped('Not supported on legacy Promise v1 API');
+        }
+
+        $loop = Factory::create();
+        $connector = new Connector($loop, array(
+            'tls' => array(
+                'verify_peer' => true
+            )
+        ));
+
+        gc_collect_cycles();
+
+        $wait = true;
+        $promise = $connector->connect('tls://self-signed.badssl.com:443')->then(
+            null,
+            function ($e) use (&$wait) {
+                $wait = false;
+                throw $e;
+            }
+        );
+
+        // run loop for short period to ensure we detect DNS error
+        Block\sleep(0.1, $loop);
+        if ($wait) {
+            Block\sleep(0.4, $loop);
+            if ($wait) {
+                $this->fail('Connection attempt did not fail');
+            }
+        }
+        unset($promise);
+
+        $this->assertEquals(0, gc_collect_cycles());
+    }
+
+    public function testWaitingForSuccessfullyClosedConnectionShouldNotCreateAnyGarbageReferences()
+    {
+        if (class_exists('React\Promise\When')) {
+            $this->markTestSkipped('Not supported on legacy Promise v1 API');
+        }
+
+        $loop = Factory::create();
+        $connector = new Connector($loop, array('timeout' => false));
+
+        gc_collect_cycles();
+        $promise = $connector->connect('google.com:80')->then(
+            function ($conn) {
+                $conn->close();
+            }
+        );
+        Block\await($promise, $loop, self::TIMEOUT);
+        unset($promise);
+
+        $this->assertEquals(0, gc_collect_cycles());
+    }
+
+    public function testConnectingFailsIfTimeoutIsTooSmall()
+    {
         $loop = Factory::create();
 
         $connector = new Connector($loop, array(

@@ -1,5 +1,37 @@
 # Changelog
 
+## 1.0.0 (2018-07-11)
+
+*   First stable LTS release, now following [SemVer](https://semver.org/).
+    We'd like to emphasize that this component is production ready and battle-tested.
+    We plan to support all long-term support (LTS) releases for at least 24 months,
+    so you have a rock-solid foundation to build on top of.
+
+>   Contains no other changes, so it's actually fully compatible with the v0.5.3 release.
+
+## 0.5.3 (2018-07-09)
+
+*   Improve performance by importing global functions.
+    (#167 by @Ocramius)
+
+*   Improve test suite by simplifying test bootstrap by using dev autoloader.
+    (#169 by @lcobucci)
+
+*   Minor internal changes to improved backward compatibility with PHP 5.3.
+    (#166 by @Donatello-za)
+
+## 0.5.2 (2018-04-24)
+
+*   Feature: Improve memory consumption and runtime performance for `StreamSelectLoop` timers.
+    (#164 by @clue)
+
+*   Improve test suite by removing I/O dependency at `StreamSelectLoopTest` to fix Mac OS X tests.
+    (#161 by @nawarian)
+
+## 0.5.1 (2018-04-09)
+
+*   Feature: New `ExtEvLoop` (PECL ext-ev)  (#148 by @kaduev13)
+
 ## 0.5.0 (2018-04-05)
 
 A major feature release with a significant documentation overhaul and long overdue API cleanup!

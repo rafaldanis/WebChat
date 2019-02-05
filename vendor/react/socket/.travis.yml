@@ -8,6 +8,7 @@ php:
   - 7.0
   - 7.1
   - 7.2
+  - 7.3
 # - 7.0 # Mac OS X, ignore errors, see below
   - hhvm # ignore errors, see below
 
@@ -18,7 +19,6 @@ matrix:
   include:
     - php: 5.3
       dist: precise
-  include:
     - os: osx
       language: generic
       php: 7.0 # just to look right on travis
