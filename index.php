@@ -69,8 +69,8 @@
             <ul class="sidebar-nav" data-content="users"></ul>
         </div>
     
-        <div id="page-content-wrapper" class="d-flex align-items-center">
-            <div id="scroll" class="container d-flex justify-content-center" style="height: 50%; overflow-y: auto;">
+        <div id="page-content-wrapper" class="d-flex">
+            <div id="scroll" class="container d-flex justify-content-center" style="height: calc(100% - 116px); overflow-y: auto;">
                 <div id="content" class="col-12">
                     <div class="" data-content="chat" id="chat"></div>
                     <?php

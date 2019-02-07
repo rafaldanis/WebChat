@@ -23,6 +23,21 @@ class Chat implements MessageComponentInterface {
         $conn->send(json_encode($this->logs));
         $this->connectedUsers [$conn->resourceId] = $conn;
     }
+    private function getNickFromMessage(string $msg)
+    {
+	echo 'getNick: ';
+	preg_match('/@[a-zA-Z0-9\.\-_]*/', $msg, $nick);
+	if($nick){
+	foreach ($this->connectedUsersNames as $i => $user) {
+		echo $user . " == " . $nick[0] . "\n";
+		if ($user == str_replace('@', '', $nick[0])){
+			echo "\nwykryłem użycie nicku: " .$i. " user: " .$user;
+			return $i;
+		}
+	}} else {
+        	return null;
+         }
+    }
 
     public function onMessage(ConnectionInterface $from, $msg) {
         //użytkownik istnieje
@@ -36,7 +51,9 @@ class Chat implements MessageComponentInterface {
                 "all_users" => $this->connectedUsersNames,
                 "timestamp" => time()
             );
-            $this->sendMessage($this->logs);
+
+	    $this->getNickFromMessage($msg);
+            $this->sendMessage($this->logs, $this->getNickFromMessage($msg));
         } else {
             //użytkownik nie istnieje, świeżo zalogowany
             echo "\nZalogował się: " . $msg;
@@ -54,9 +71,16 @@ class Chat implements MessageComponentInterface {
         $conn->close();
     }
 
-    private function sendMessage($message) {
-        foreach ($this->connectedUsers as $user) {
-            $user->send(json_encode($message));
-        }
+    private function sendMessage($message, $nick=null) {
+	if ($nick==null) {
+        	foreach ($this->connectedUsers as $i => $user) {
+			echo '$i' . $i;
+            		$user->send(json_encode($message));
+        	}
+	} else {
+		echo 'priv';
+		$this->connectedUsers[$nick]->send(json_encode($message));
+		//$nick->send(json_encode($message));
+	}
     }
 }
