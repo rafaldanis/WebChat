@@ -20,16 +20,15 @@ class Chat implements MessageComponentInterface {
 
     public function onOpen(ConnectionInterface $conn) {
         $this->clients->attach($conn);
-        echo "New connection! ({$conn->resourceId})\n";
         $conn->send(json_encode($this->logs));
         $this->connectedUsers [$conn->resourceId] = $conn;
     }
 
     public function onMessage(ConnectionInterface $from, $msg) {
-        echo "New Message!\n".$msg;
-        // Do we have a username for this user yet?
+        //użytkownik istnieje
         if (isset($this->connectedUsersNames[$from->resourceId])) {
-            // If we do, append to the chat logs their message
+	   echo "\n" . $this->connectedUsersNames[$from->resourceId] . ' : ' . $msg;
+
             $this->logs = [];
             $this->logs[] = array(
                 "user" => $this->connectedUsersNames[$from->resourceId],
@@ -39,13 +38,13 @@ class Chat implements MessageComponentInterface {
             );
             $this->sendMessage($this->logs);
         } else {
-            // If we don't this message will be their username
+            //użytkownik nie istnieje, świeżo zalogowany
+            echo "\nZalogował się: " . $msg;
             $this->connectedUsersNames[$from->resourceId] = $msg;
         }
     }
 
     public function onClose(ConnectionInterface $conn) {
-        // Detatch everything from everywhere
         $this->clients->detach($conn);
         unset($this->connectedUsersNames[$conn->resourceId]);
         unset($this->connectedUsers[$conn->resourceId]);
