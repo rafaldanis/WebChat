@@ -5,6 +5,8 @@ use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
 use ChatApp\Chat;
+use ChatApp\CheckMessage\Check;
+use ChatApp\Preparation\PreparationMessage;
 
 $server = IoServer::factory(
     new HttpServer(

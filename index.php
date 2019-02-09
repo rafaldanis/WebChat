@@ -29,7 +29,7 @@
             });
         });
 
-            var ws = new WebSocket('ws://91.239.66.112:8080');
+            var ws = new WebSocket('ws://127.0.0.1:8080');
             
             ws.onmessage = function(e){
                 receiveMessage(e);
