@@ -3,7 +3,7 @@
         header("Location: start.php");
     }
     
-    define("USER_NICK",$_POST['nick']);
+    define("USER_NICK", $_POST['nick']);
 ?>
 <!DOCTYPE html>
 <html>
@@ -79,7 +79,6 @@
                             echo '<form id="message" class="form-signin p-3" data-submit="message" data-ret="false" type="POST">';
                                 echo '<p>Hej <span>' . USER_NICK . '</span> poniżej wpisz wiadomość</p>';
                                 echo '<input class="form-control" data-type="message" placeholder="Wpisz wiadomość..." />';
-                               // echo '<button type="submit" class="btn btn-lg btn-primary btn-block btn-signin">Wyślij</button';
                             echo '</form>';
                         echo '</div>';
                     ?>
