@@ -11,6 +11,7 @@ class Chat implements MessageComponentInterface {
     private $connectedUsersNames;
     private $checkMessage;
     private $preparationMessage;
+    private $connectedUsersId;
 
     public function __construct()
     {
@@ -18,6 +19,7 @@ class Chat implements MessageComponentInterface {
         $this->logs = [];
         $this->connectedUsers = [];
         $this->connectedUsersNames = [];
+        $this->connectedUsersId = [];
         $this->checkMessage = new CheckMessage\Check;
         $this->preparationMessage = new PreparationMessage\Preparation;
     }
@@ -48,6 +50,7 @@ class Chat implements MessageComponentInterface {
         } else {
             //użytkownik nie istnieje, świeżo zalogowany
             echo "\nZalogował się: " . $msg;
+            $this->connectedUsersId[$msg] = $from->resourceId;
             $this->connectedUsersNames[$from->resourceId] = $msg;
         }
     }
@@ -55,6 +58,7 @@ class Chat implements MessageComponentInterface {
     public function onClose(ConnectionInterface $conn)
     {
         $this->clients->detach($conn);
+        unset($this->connectedUsersId[$this->connectedUsersNames[$conn->resourceId]]);
         unset($this->connectedUsersNames[$conn->resourceId]);
         unset($this->connectedUsers[$conn->resourceId]);
     }
@@ -67,13 +71,16 @@ class Chat implements MessageComponentInterface {
     private function sendMessage(array $message)
     {
         $jsonMessage = json_encode(array($message));
-        var_dump($message['nick']);
         if (!$message['nick']) {
-                foreach ($this->connectedUsers as $i => $user) {
-                    $user->send($jsonMessage);
-                }
+            foreach ($this->connectedUsers as $i => $user) {
+                $user->send($jsonMessage);
+            }
         } else {
-            $this->connectedUsers[$message['nick']]->send($jsonMessage);
+            foreach ($message['nick'] as $nick) {
+                if (isset($this->connectedUsersId[$nick])) {
+                    $this->connectedUsers[$this->connectedUsersId[$nick]]->send($jsonMessage);
+                }
+            }
             $this->connectedUsers[$message['user_id']]->send($jsonMessage);
         }
     }

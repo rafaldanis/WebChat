@@ -3,12 +3,12 @@ namespace ChatApp\CheckMessage;
 
 class Check
 {
+
     public function getNick($msg, $users)
     {
-        $nick = $this->getNickFromMessage($msg, $users);
-
-        if ($nick) {
-            return $nick;
+        $nicks = $this->getNickFromMessage($msg, $users);
+        if (is_array($nicks) && count($nicks) > 0) {
+            return $nicks;
         }
 
         return null;
@@ -16,15 +16,14 @@ class Check
 
     private function getNickFromMessage(string $msg, array $users)
     {
-        preg_match('/@[a-zA-Z0-9\.\-_]*/', $msg, $nick);
-        if ($nick) {
-            foreach ($users as $i => $user) {
-                if ($user == str_replace('@', '', $nick[0])) {
-                    return $i;
-                }
+        preg_match_all('/@[a-zA-Z0-9ąęółśążźćńĄĘÓŁŚĄŻŹĆŃ\.\-_]*/', $msg, $nick);
+        if (is_array($nick[0]) && count($nick[0]) > 0) {
+            foreach ($nick[0] as $n) {
+                echo "\n dodaje do tablicy \n";
+                $nicks[] = str_replace('@', '', $n);
             }
-        } else {
-            return null;
+            return $nicks;
         }
+        return null;
     }
 }
